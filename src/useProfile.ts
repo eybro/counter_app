@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
 export function useProfile() {
-  const [profile, setProfile] = useState<{ organization_id: number, venueName: string } | null>(
-    null,
-  );
+  const [profile, setProfile] = useState<{
+    organization_id: number;
+    venueName: string;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,7 +21,6 @@ export function useProfile() {
 
         const data = await response.json();
         setProfile(data);
-   
       } catch (error) {
         console.error("Error fetching profile:", error);
       } finally {
