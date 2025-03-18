@@ -67,7 +67,7 @@ export default function CounterApp() {
 
   return (
 
-    <div className="flex flex-col items-center justify-center h-screen gap-8 relative">
+    <div className="flex flex-col items-center justify-center h-screen gap-2 relative">
       {!isConnected && (
         <div className="absolute top-20 p-4 bg-red-500 text-white rounded-md">
           Connection Lost. Please refresh the page.
@@ -122,13 +122,13 @@ export default function CounterApp() {
         </div>
       </div>
 
-      <h1 className="absolute top-5 text-4xl font-bold">
+      <h1 className="absolute top-5 text-3xl font-bold">
         {profile?.venueName} Count
       </h1>
 
-      <p className="text-9xl font-semibold">{totalCount}</p>
+      <p className="text-8xl font-semibold">{totalCount}</p>
 
-      <div className="flex flex-col gap-12 mt-6">
+      <div className="flex flex-col gap-6 mt-6">
         <div className="flex flex-col items-center">
           <h2 className="text-3xl font-semibold">Members</h2>
           <p className="text-7xl font-bold">{memberCount}</p>
