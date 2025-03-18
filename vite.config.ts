@@ -16,6 +16,6 @@ export default defineConfig({
     host: '0.0.0.0',
   },
   preview: {
-    allowedHosts: ['counter-ip8zd.ondigitalocean.app'], 
+    allowedHosts: ['counter-ip8zd.ondigitalocean.app', 'counter.pubquery.se'], 
   },
 });
