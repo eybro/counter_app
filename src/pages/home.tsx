@@ -10,12 +10,23 @@ export default function CounterApp() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [error] = useState("");
+  const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
     if (!profile || loading) return;
 
     const newSocket = io(import.meta.env.VITE_REACT_APP_API_URL, {
       query: { organizationId: profile.organization_id },
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Connected to server");
+      setIsConnected(true); 
+    });
+
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from server");
+      setIsConnected(false); 
     });
 
     newSocket.on("updateCounter", ({ memberCount, nonMemberCount }) => {
@@ -55,7 +66,13 @@ export default function CounterApp() {
   if (loading) return <p className="text-center text-2xl">Loading...</p>;
 
   return (
+
     <div className="flex flex-col items-center justify-center h-screen gap-8 relative">
+      {!isConnected && (
+        <div className="absolute top-20 p-4 bg-red-500 text-white rounded-md">
+          Connection Lost. Please refresh the page.
+        </div>
+      )}
       <button
         onClick={() => setSidebarOpen(true)}
         className="absolute top-5 left-5 p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition"
@@ -161,5 +178,6 @@ export default function CounterApp() {
         </div>
       </div>
     </div>
+
   );
 }
