@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export function useProfile() {
-  const [profile, setProfile] = useState<{ organization_id: number } | null>(
+  const [profile, setProfile] = useState<{ organization_id: number, venueName: string } | null>(
     null,
   );
   const [loading, setLoading] = useState(true);
