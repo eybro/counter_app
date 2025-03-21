@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { useProfile } from "../useProfile";
 import { Menu, X } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export default function CounterApp() {
   const { profile, loading } = useProfile();
@@ -11,6 +12,8 @@ export default function CounterApp() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [error] = useState("");
   const [isConnected, setIsConnected] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+
 
   useEffect(() => {
     if (!profile || loading) return;
@@ -32,6 +35,10 @@ export default function CounterApp() {
     newSocket.on("updateCounter", ({ memberCount, nonMemberCount }) => {
       setMemberCount(memberCount);
       setNonMemberCount(nonMemberCount);
+    });
+
+    newSocket.on("updateVisibility", (visible: boolean) => {
+      setIsVisible(visible);
     });
 
     setSocket(newSocket);
@@ -61,6 +68,12 @@ export default function CounterApp() {
     }
   };
 
+  const toggleVisibility = () => {
+    const newVisibility = !isVisible;
+    setIsVisible(newVisibility);
+    socket?.emit("toggleVisibility", newVisibility);
+  };
+
   const totalCount = memberCount + nonMemberCount;
 
   if (loading) return <p className="text-center text-2xl">Loading...</p>;
@@ -70,7 +83,7 @@ export default function CounterApp() {
     <div className="flex flex-col items-center justify-center h-screen gap-2 relative">
       {!isConnected && (
         <div className="absolute top-20 p-4 bg-red-500 text-white rounded-md">
-          Connection Lost. Please refresh the page.
+          Connection Lost. Please wait a few seconds.
         </div>
       )}
       <button
@@ -98,6 +111,15 @@ export default function CounterApp() {
         </div>
 
         <div className="p-4 flex flex-col gap-4">
+
+        <div className="p-4 flex items-center gap-4">
+  <span className="text-xl font-medium">Show count</span>
+  <Switch
+    checked={isVisible}
+    onCheckedChange={toggleVisibility}
+    className="scale-150 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
+  />
+</div>
           <button
             onClick={handleReset}
             className="w-full px-6 py-3 text-lg bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 transition"
