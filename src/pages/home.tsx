@@ -83,7 +83,7 @@ export default function CounterApp() {
     <div className="flex flex-col items-center justify-center h-screen gap-2 relative">
       {!isConnected && (
         <div className="absolute top-20 p-4 bg-red-500 text-white rounded-md">
-          Connection Lost. Please wait a few seconds.
+          Connection Lost, reconnecting...
         </div>
       )}
       <button
@@ -148,7 +148,8 @@ export default function CounterApp() {
         {profile?.venueName} Count
       </h1>
 
-      <p className="text-8xl font-semibold">{totalCount}</p>
+      <p className="text-7xl font-semibold md:text-8xl">{totalCount}</p>
+
 
       <div className="flex flex-col gap-6 mt-6">
         <div className="flex flex-col items-center">
