@@ -4,6 +4,7 @@ import { useProfile } from "../useProfile";
 import { Menu, X } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
+
 export default function CounterApp() {
   const { profile, loading } = useProfile();
   const [memberCount, setMemberCount] = useState(0);
@@ -49,6 +50,7 @@ export default function CounterApp() {
   }, [profile, loading]);
 
   const handleIncrement = (type: "member" | "nonMember") => {
+    navigator.vibrate(200);
     socket?.emit("increment", {
       organizationId: profile?.organization_id,
       type,
