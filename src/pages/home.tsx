@@ -50,7 +50,6 @@ export default function CounterApp() {
   }, [profile, loading]);
 
   const handleIncrement = (type: "member" | "nonMember") => {
-    navigator.vibrate(200);
     socket?.emit("increment", {
       organizationId: profile?.organization_id,
       type,
