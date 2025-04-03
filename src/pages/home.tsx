@@ -14,6 +14,10 @@ export default function CounterApp() {
   const [error] = useState("");
   const [isConnected, setIsConnected] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
+  const [maxCapacity, setMaxCapacity] = useState(0);
+  const [tempCapacity, setTempCapacity] = useState<number>(maxCapacity);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -39,7 +43,13 @@ export default function CounterApp() {
     });
 
     newSocket.on("updateVisibility", (visible: boolean) => {
+      console.log("Visibility updated:", visible);
       setIsVisible(visible);
+    });
+
+    newSocket.on("updateMaxCapacity", (maxCapacity: number) => {
+      setMaxCapacity(maxCapacity);
+      setTempCapacity(maxCapacity);
     });
 
     setSocket(newSocket);
@@ -75,6 +85,19 @@ export default function CounterApp() {
     socket?.emit("toggleVisibility", newVisibility);
   };
 
+  const handleMaxCapacity = (newMaxCapacity: number) => {
+    setMaxCapacity(newMaxCapacity);
+    socket?.emit("updateMaxCapacity", newMaxCapacity);
+  };
+  
+  const handleConfirm = () => {
+    setMaxCapacity(tempCapacity); 
+    setShowConfirm(false);
+    handleMaxCapacity(tempCapacity);
+    setShowPopup(true); // Show popup
+  
+    setTimeout(() => setShowPopup(false), 3000);
+  };
   const totalCount = memberCount + nonMemberCount;
 
   if (loading) return <p className="text-center text-2xl">Loading...</p>;
@@ -113,14 +136,48 @@ export default function CounterApp() {
 
         <div className="p-4 flex flex-col gap-4">
 
+        <div className="p-4 flex flex-col gap-2">
+    <label htmlFor="maxCapacity" className="text-xl font-medium">
+      Max Capacity
+    </label>
+    <input
+      id="maxCapacity"
+      type="number"
+      min="0"
+      value={tempCapacity}
+      onChange={(e) => {
+        const value = Math.max(0, Number(e.target.value));
+        setTempCapacity(value);
+        setShowConfirm(true);
+      }}
+      className="w-full p-2 border rounded-lg text-lg"
+      placeholder="Enter max capacity"
+    />
+
+{showConfirm && (
+      <button
+        onClick={handleConfirm}
+        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+      >
+        Confirm
+      </button>
+    )}
+
+{showPopup && (
+      <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg">
+        Capacity updated to {maxCapacity}!
+      </div>
+    )}
+  </div>
+
         <div className="p-4 flex items-center gap-4">
-  <span className="text-xl font-medium">Show count</span>
-  <Switch
-    checked={isVisible}
-    onCheckedChange={toggleVisibility}
-    className="scale-150 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
-  />
-</div>
+        <span className="text-xl font-medium">Show count</span>
+        <Switch
+          checked={isVisible}
+          onCheckedChange={toggleVisibility}
+          className="scale-150 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
+        />
+      </div>
           <button
             onClick={handleReset}
             className="w-full px-6 py-3 text-lg bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 transition"
