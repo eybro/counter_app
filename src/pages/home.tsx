@@ -14,10 +14,13 @@ export default function CounterApp() {
   const [error] = useState("");
   const [isConnected, setIsConnected] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
-  const [maxCapacity, setMaxCapacity] = useState(0);
-  const [tempCapacity, setTempCapacity] = useState<number>(maxCapacity);
+  const [maxCapacity, setMaxCapacity] = useState<number | null>(null);
+  const [tempCapacity, setTempCapacity] = useState<number | null>(null);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
+
+  const [selectedLineLength, setSelectedLineLength] = useState<"short" | "medium" | "long" | "no_line">("no_line");
+
 
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export default function CounterApp() {
     const newSocket = io(import.meta.env.VITE_REACT_APP_API_URL, {
       query: { organizationId: profile.organization_id },
     });
-
+  
     newSocket.on("connect", () => {
       console.log("Connected to server");
       setIsConnected(true); 
@@ -43,10 +46,13 @@ export default function CounterApp() {
     });
 
     newSocket.on("updateVisibility", (visible: boolean) => {
-      console.log("Visibility updated:", visible);
       setIsVisible(visible);
     });
 
+    newSocket.on("updateLineLength", (length: "short" | "medium" | "long" | "no_line") => {
+      setSelectedLineLength(length);
+    });
+  
     newSocket.on("updateMaxCapacity", (maxCapacity: number) => {
       setMaxCapacity(maxCapacity);
       setTempCapacity(maxCapacity);
@@ -85,19 +91,32 @@ export default function CounterApp() {
     socket?.emit("toggleVisibility", newVisibility);
   };
 
-  const handleMaxCapacity = (newMaxCapacity: number) => {
-    setMaxCapacity(newMaxCapacity);
-    socket?.emit("updateMaxCapacity", newMaxCapacity);
+  const handleMaxCapacity = (newMaxCapacity: number | null) => {
+    const value = newMaxCapacity ?? 0;
+    setMaxCapacity(value);
+    socket?.emit("updateMaxCapacity", value);
   };
   
   const handleConfirm = () => {
     setMaxCapacity(tempCapacity); 
     setShowConfirm(false);
     handleMaxCapacity(tempCapacity);
-    setShowPopup(true); // Show popup
+    setShowPopup(true); 
   
     setTimeout(() => setShowPopup(false), 3000);
   };
+
+
+  const handleLineLength = (length: "short" | "medium" | "long" | "no_line") => {
+    setSelectedLineLength(length);
+    socket?.emit("updateLineLength", length);
+
+    if (length !== "no_line") {
+      setIsVisible(false);
+      socket?.emit("toggleVisibility", false);
+    }
+  };
+
   const totalCount = memberCount + nonMemberCount;
 
   if (loading) return <p className="text-center text-2xl">Loading...</p>;
@@ -135,24 +154,75 @@ export default function CounterApp() {
         </div>
 
         <div className="p-4 flex flex-col gap-4">
+        <div className="p-4">
+  <h3 className="text-xl font-semibold mb-2">Line length</h3>
+  <div className="flex flex-col gap-2">
+    <button
+      onClick={() => handleLineLength("short")}
+      className={`px-4 py-2 rounded-lg font-medium transition ${
+        selectedLineLength === "short"
+          ? "bg-green-500 text-white"
+          : "bg-gray-200 hover:bg-gray-300"
+      }`}
+    >
+      Short
+    </button>
+    <button
+      onClick={() => handleLineLength("medium")}
+      className={`px-4 py-2 rounded-lg font-medium transition ${
+        selectedLineLength === "medium"
+          ? "bg-yellow-400 text-white"
+          : "bg-gray-200 hover:bg-gray-300"
+      }`}
+    >
+      Medium
+    </button>
+    <button
+      onClick={() => handleLineLength("long")}
+      className={`px-4 py-2 rounded-lg font-medium transition ${
+        selectedLineLength === "long"
+          ? "bg-red-500 text-white"
+          : "bg-gray-200 hover:bg-gray-300"
+      }`}
+    >
+      Long
+    </button>
+    <button
+      onClick={() => handleLineLength("no_line")}
+      className={`px-4 py-2 rounded-lg font-medium transition ${
+        selectedLineLength === "no_line"
+          ? "bg-gray-800 text-white"
+          : "bg-gray-200 hover:bg-gray-300"
+      }`}
+    >
+      Don’t display
+    </button>
+  </div>
+</div>
 
         <div className="p-4 flex flex-col gap-2">
     <label htmlFor="maxCapacity" className="text-xl font-medium">
       Max Capacity
     </label>
     <input
-      id="maxCapacity"
-      type="number"
-      min="0"
-      value={tempCapacity}
-      onChange={(e) => {
-        const value = Math.max(0, Number(e.target.value));
-        setTempCapacity(value);
-        setShowConfirm(true);
-      }}
-      className="w-full p-2 border rounded-lg text-lg"
-      placeholder="Enter max capacity"
-    />
+  id="maxCapacity"
+  type="number"
+  value={tempCapacity === null ? "" : tempCapacity}
+  onChange={(e) => {
+    const raw = e.target.value;
+
+    if (raw === "") {
+      setTempCapacity(null); // temporarily store as null
+    } else {
+      const value = Math.max(0, Number(raw));
+      setTempCapacity(value);
+    }
+
+    setShowConfirm(true);
+  }}
+  className="w-full p-2 border rounded-lg text-lg"
+  placeholder="Enter max capacity"
+/>
 
 {showConfirm && (
       <button
@@ -171,10 +241,11 @@ export default function CounterApp() {
   </div>
 
         <div className="p-4 flex items-center gap-4">
-        <span className="text-xl font-medium">Show count</span>
+        <span className="text-xl font-medium">Show capacity</span>
         <Switch
           checked={isVisible}
           onCheckedChange={toggleVisibility}
+          disabled={selectedLineLength !== "no_line"} 
           className="scale-150 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
         />
       </div>
