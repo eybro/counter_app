@@ -93,12 +93,20 @@ export default function CounterApp() {
   const toggleVisibility = () => {
     const newVisibility = !isVisible;
     setIsVisible(newVisibility);
+    if(isRatioVisible) {
+      setIsRatioVisible(false);
+      socket?.emit("toggleRatioVisibility", false);
+    }
     socket?.emit("toggleVisibility", newVisibility);
   };
 
   const toggleRatioVisibility = () => {
     const newVisibility = !isRatioVisible;
     setIsRatioVisible(newVisibility);
+    if (!isVisible) {
+      setIsVisible(true);
+      socket?.emit("toggleVisibility", true);
+    }
     socket?.emit("toggleRatioVisibility", newVisibility);
   };
 
@@ -225,7 +233,7 @@ export default function CounterApp() {
     const raw = e.target.value;
 
     if (raw === "") {
-      setTempCapacity(null); // temporarily store as null
+      setTempCapacity(null); 
     } else {
       const value = Math.max(0, Number(raw));
       setTempCapacity(value);
