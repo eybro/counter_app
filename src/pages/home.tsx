@@ -14,6 +14,7 @@ export default function CounterApp() {
   const [error] = useState("");
   const [isConnected, setIsConnected] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
+  const [isRatioVisible, setIsRatioVisible] = useState(true);
   const [maxCapacity, setMaxCapacity] = useState<number | null>(null);
   const [tempCapacity, setTempCapacity] = useState<number | null>(null);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
@@ -47,6 +48,10 @@ export default function CounterApp() {
 
     newSocket.on("updateVisibility", (visible: boolean) => {
       setIsVisible(visible);
+    });
+
+    newSocket.on("updateRatioVisibility", (visible: boolean) => {
+      setIsRatioVisible(visible);
     });
 
     newSocket.on("updateLineLength", (length: "short" | "medium" | "long" | "no_line") => {
@@ -91,6 +96,12 @@ export default function CounterApp() {
     socket?.emit("toggleVisibility", newVisibility);
   };
 
+  const toggleRatioVisibility = () => {
+    const newVisibility = !isRatioVisible;
+    setIsRatioVisible(newVisibility);
+    socket?.emit("toggleRatioVisibility", newVisibility);
+  };
+
   const handleMaxCapacity = (newMaxCapacity: number | null) => {
     const value = newMaxCapacity ?? 0;
     setMaxCapacity(value);
@@ -113,7 +124,9 @@ export default function CounterApp() {
 
     if (length !== "no_line") {
       setIsVisible(false);
+      setIsRatioVisible(false);
       socket?.emit("toggleVisibility", false);
+      socket?.emit("toggleRatioVisibility", false);
     }
   };
 
@@ -241,10 +254,19 @@ export default function CounterApp() {
   </div>
 
         <div className="p-4 flex items-center gap-4">
-        <span className="text-xl font-medium">Show capacity</span>
+        <span className="text-xl font-medium w-42">Show capacity</span>
         <Switch
           checked={isVisible}
           onCheckedChange={toggleVisibility}
+          disabled={selectedLineLength !== "no_line"} 
+          className="scale-150 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
+        />
+      </div>
+      <div className="p-4 flex items-center gap-4">
+        <span className="text-xl font-medium w-42">Show 50/50 ratio</span>
+        <Switch
+          checked={isRatioVisible}
+          onCheckedChange={toggleRatioVisibility}
           disabled={selectedLineLength !== "no_line"} 
           className="scale-150 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
         />
