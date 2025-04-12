@@ -165,7 +165,7 @@ export default function CounterApp() {
           <h2 className="text-2xl font-semibold">Menu</h2>
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
-
+        <div className="flex-1 overflow-y-auto">
         <div className="p-4 flex flex-col gap-4">
         <div className="p-4">
   <h3 className="text-xl font-semibold mb-2">Line length</h3>
@@ -293,6 +293,7 @@ export default function CounterApp() {
             Logout
           </button>
         </div>
+      </div>
       </div>
 
       <h1 className="absolute top-5 text-3xl font-bold">
