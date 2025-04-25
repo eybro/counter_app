@@ -28,7 +28,7 @@ export default function CounterApp() {
     if (!profile || loading) return;
 
     const newSocket = io(import.meta.env.VITE_REACT_APP_API_URL, {
-      query: { organizationId: profile.organization_id },
+      query: { venueId: profile.venueId },
     });
   
     newSocket.on("connect", () => {

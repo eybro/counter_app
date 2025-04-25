@@ -4,6 +4,7 @@ export function useProfile() {
   const [profile, setProfile] = useState<{
     organization_id: number;
     venueName: string;
+    venueId: number;
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
