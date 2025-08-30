@@ -144,18 +144,13 @@ export default function CounterApp() {
 
   return (
 
-    <div className="flex flex-col items-center justify-center h-screen gap-1 sm:gap-2 relative pt-16 sm:pt-20">
+    <div className="relative flex min-h-screen flex-col items-center gap-1 sm:gap-2 pt-16 sm:pt-20">
       {!isConnected && (
         <div className="absolute top-20 p-4 bg-red-500 text-white rounded-md">
           Connection Lost, reconnecting...
         </div>
       )}
 
-     {!isVisible && selectedLineLength === "no_line" && (
-  <div className="absolute top-12 sm:top-16 flex items-center gap-1.5 rounded-full bg-orange-500 px-3 py-1 text-[8px] sm:text-xs font-medium text-white shadow-md">
-    <span>Count not visible on pubquery.se — toggle on in menu</span>
-  </div>
-)}
       <button
         onClick={() => setSidebarOpen(true)}
         className="absolute top-5 left-5 p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition"
@@ -310,7 +305,13 @@ export default function CounterApp() {
       </div>
       </div>
 
-      <h1 className="absolute top-3 text-xl font-bold sm:top-5 sm:text-3xl">
+      {!isVisible && selectedLineLength === "no_line" && (
+  <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 flex items-center rounded-xl bg-orange-500 px-4 py-2 pl-1 text-[11px] sm:text-base font-semibold text-white shadow-md max-w-[65vw] truncate">
+    <span>Not visible on pubquery.se—toggle in menu</span>
+  </div>
+)}
+
+      <h1 className="text-2xl font-bold sm:text-3xl max-w-[60vw] truncate mb-1 sm:mb-2">
         {profile?.venueName} Count
       </h1>
 
