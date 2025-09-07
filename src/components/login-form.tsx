@@ -72,17 +72,24 @@ export function LoginForm({
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+                 <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+               <a
+                href="http://localhost:3001/forgot-password"
+                className="text-xs text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 rounded-sm"
+              >
+                Forgot password?
+              </a>
+                            </div>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+            </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" className="w-full">
                 Login
