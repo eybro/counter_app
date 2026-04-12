@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { useProfile } from "../useProfile";
 import { Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
 
 
 export default function CounterApp() {
+  const navigate = useNavigate();
   const { profile, loading } = useProfile();
   const [memberCount, setMemberCount] = useState(0);
   const [nonMemberCount, setNonMemberCount] = useState(0);
@@ -280,6 +282,15 @@ export default function CounterApp() {
           className="scale-150 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
         />
       </div>
+          <button
+            onClick={() => {
+              setSidebarOpen(false);
+              navigate("/manual-entry");
+            }}
+            className="w-full px-6 py-3 text-lg bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
+          >
+            Manual Entry
+          </button>
           <button
             onClick={handleReset}
             className="w-full px-6 py-3 text-lg bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 transition"

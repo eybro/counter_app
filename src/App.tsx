@@ -7,6 +7,7 @@ import {
 import RequireAuth from "./RequireAuth";
 import LoginPage from "./pages/login";
 import Home from "./pages/home";
+import ManualEntry from "./pages/manual-entry";
 import { useEffect, useState } from "react";
 
 const App = () => {
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="*" element={<Navigate to="/login" />} />
         <Route element={<RequireAuth />}>
           <Route path="/home" element={<Home />} />
+          <Route path="/manual-entry" element={<ManualEntry />} />
         </Route>
       </Routes>
     </Router>
