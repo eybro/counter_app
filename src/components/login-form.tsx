@@ -75,7 +75,7 @@ export function LoginForm({
                  <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
                <a
-                href="http://localhost:3001/forgot-password"
+                href="https://admin.pubquery.se/forgot-password"
                 className="text-xs text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 rounded-sm"
               >
                 Forgot password?
